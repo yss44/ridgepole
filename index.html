@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Ridgepole : Ridgepole is a tool to manage DB schema.  It defines DB schema using Rails DSL, and updates DB schema according to DSL. (like Chef/Puppet)">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Ridgepole</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/winebarrel/ridgepole">View on GitHub</a>
+
+          <h1 id="project_title">Ridgepole</h1>
+          <h2 id="project_tagline">Ridgepole is a tool to manage DB schema.  It defines DB schema using Rails DSL, and updates DB schema according to DSL. (like Chef/Puppet)</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/winebarrel/ridgepole/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/winebarrel/ridgepole/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <p><strong>Notice</strong></p>
+
+<ul>
+<li>
+<code>&gt;= 0.4.8</code>
+
+<ul>
+<li>
+<code>activerecord-mysql-unsigned</code> is now optional. Please pass <code>--enable-mysql-unsigned</code> after you install <a href="https://github.com/waka/activerecord-mysql-unsigned">activerecord-mysql-unsigned</a> if you want to use.</li>
+<li>Please pass <code>--enable-foreigner</code> after you install <a href="https://github.com/matthuhiggins/foreigner">foreigner</a> if you want to use the foreign key.</li>
+</ul>
+</li>
+<li>
+<code>&gt;= 0.4.11</code>
+
+<ul>
+<li>Add <code>--enable-mysql-pkdump</code> option.</li>
+</ul>
+</li>
+<li>
+<code>&gt;= 0.4.12</code>
+
+<ul>
+<li>Fix <code>activerecord-mysql-unsigned</code> version: <code>~&gt; 0.2.0</code>
+</li>
+</ul>
+</li>
+</ul>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>Add this line to your application's Gemfile:</p>
+
+<pre><code>gem 'ridgepole'
+</code></pre>
+
+<p>And then execute:</p>
+
+<pre><code>$ bundle
+</code></pre>
+
+<p>Or install it yourself as:</p>
+
+<pre><code>$ gem install ridgepole
+</code></pre>
+
+<h2>
+<a id="help" class="anchor" href="#help" aria-hidden="true"><span class="octicon octicon-link"></span></a>Help</h2>
+
+<pre><code>Usage: ridgepole [options]
+    -c, --config CONF_OR_FILE
+    -E, --env ENVIRONMENT
+    -a, --apply
+    -m, --merge
+    -f, --file FILE
+        --dry-run
+        --table-options OPTIONS
+        --bulk-change
+        --default-int-limit LIMIT
+        --pre-query QUERY
+        --post-query QUERY
+    -e, --export
+        --split
+        --split-with-dir
+    -d, --diff DSL1 DSL2
+        --reverse
+        --with-apply
+    -o, --output FILE
+    -t, --tables TABLES
+        --ignore-tables TABLES
+        --enable-mysql-unsigned
+        --enable-mysql-pkdump
+        --enable-foreigner
+        --log-file LOG_FILE
+        --verbose
+        --debug
+    -v, --version
+</code></pre>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<div class="highlight highlight-sh"><pre>$ git init
+Initialized empty Git repository <span class="pl-k">in</span> ...
+
+$ cat config.yml
+adapter: mysql2
+encoding: utf8
+database: blog
+username: root
+
+$ ridgepole -c config.yml --export -o Schemafile <span class="pl-c"># or `ridgepole -c '{adapter: mysql2, database: blog}' ...`</span>
+Export Schema to <span class="pl-s1"><span class="pl-pds">`</span>Schemafile<span class="pl-pds">`</span></span>
+
+$ cat Schemafile
+create_table <span class="pl-s1"><span class="pl-pds">"</span>articles<span class="pl-pds">"</span></span>, force: <span class="pl-s3">true</span> <span class="pl-k">do</span> <span class="pl-k">|</span>t<span class="pl-k">|</span>
+  t.string   <span class="pl-s1"><span class="pl-pds">"</span>title<span class="pl-pds">"</span></span>
+  t.text     <span class="pl-s1"><span class="pl-pds">"</span>text<span class="pl-pds">"</span></span>
+  t.datetime <span class="pl-s1"><span class="pl-pds">"</span>created_at<span class="pl-pds">"</span></span>
+  t.datetime <span class="pl-s1"><span class="pl-pds">"</span>updated_at<span class="pl-pds">"</span></span>
+end
+
+$ git add <span class="pl-s3">.</span>
+$ git commit -m <span class="pl-s1"><span class="pl-pds">'</span>first commit<span class="pl-pds">'</span></span>  -a
+[master (root-commit) a6c2d31] first commit
+ 2 files changed, 10 insertions(+)
+ create mode 100644 Schemafile
+ create mode 100644 config.yml
+
+$ vi Schemafile
+$ git diff
+diff --git a/Schemafile b/Schemafile
+index f5848b9..c266fed 100644
+--- a/Schemafile
++++ b/Schemafile
+@@ -1,6 +1,7 @@
+ create_table <span class="pl-s1"><span class="pl-pds">"</span>articles<span class="pl-pds">"</span></span>, force: <span class="pl-s3">true</span> <span class="pl-k">do</span> <span class="pl-k">|</span>t<span class="pl-k">|</span>
+   t.string   <span class="pl-s1"><span class="pl-pds">"</span>title<span class="pl-pds">"</span></span>
+   t.text     <span class="pl-s1"><span class="pl-pds">"</span>text<span class="pl-pds">"</span></span>
++  t.text     <span class="pl-s1"><span class="pl-pds">"</span>author<span class="pl-pds">"</span></span>
+   t.datetime <span class="pl-s1"><span class="pl-pds">"</span>created_at<span class="pl-pds">"</span></span>
+   t.datetime <span class="pl-s1"><span class="pl-pds">"</span>updated_at<span class="pl-pds">"</span></span>
+ end
+
+$ ridgepole -c config.yml --apply --dry-run
+Apply <span class="pl-s1"><span class="pl-pds">`</span>Schemafile<span class="pl-pds">`</span></span> (dry-run)
+add_column(<span class="pl-s1"><span class="pl-pds">"</span>articles<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>author<span class="pl-pds">"</span></span>, :text, {:after=<span class="pl-k">&gt;</span><span class="pl-s1"><span class="pl-pds">"</span>text<span class="pl-pds">"</span></span>})
+
+<span class="pl-c"># ALTER TABLE `articles` ADD `author` text AFTER `text`</span>
+
+$ ridgepole -c config.yml --apply
+Apply <span class="pl-s1"><span class="pl-pds">`</span>Schemafile<span class="pl-pds">`</span></span>
+-- add_column(<span class="pl-s1"><span class="pl-pds">"</span>articles<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>author<span class="pl-pds">"</span></span>, :text, {:after=<span class="pl-k">&gt;</span><span class="pl-s1"><span class="pl-pds">"</span>text<span class="pl-pds">"</span></span>})
+   -<span class="pl-k">&gt;</span> 0.0202s</pre></div>
+
+<h2>
+<a id="rename" class="anchor" href="#rename" aria-hidden="true"><span class="octicon octicon-link"></span></a>Rename</h2>
+
+<div class="highlight highlight-ruby"><pre>create_table <span class="pl-s1"><span class="pl-pds">"</span>articles<span class="pl-pds">"</span></span>, <span class="pl-c1">force:</span> <span class="pl-c1">true</span> <span class="pl-k">do </span>|<span class="pl-vo">t</span>|
+  t.string   <span class="pl-s1"><span class="pl-pds">"</span>title<span class="pl-pds">"</span></span>
+  t.text     <span class="pl-s1"><span class="pl-pds">"</span>desc<span class="pl-pds">"</span></span>, <span class="pl-c1">renamed_from:</span> <span class="pl-s1"><span class="pl-pds">"</span>text<span class="pl-pds">"</span></span>
+  t.text     <span class="pl-s1"><span class="pl-pds">"</span>author<span class="pl-pds">"</span></span>
+  t.datetime <span class="pl-s1"><span class="pl-pds">"</span>created_at<span class="pl-pds">"</span></span>
+  t.datetime <span class="pl-s1"><span class="pl-pds">"</span>updated_at<span class="pl-pds">"</span></span>
+<span class="pl-k">end</span>
+
+create_table <span class="pl-s1"><span class="pl-pds">"</span>user_comments<span class="pl-pds">"</span></span>, <span class="pl-c1">force:</span> <span class="pl-c1">true</span>, <span class="pl-c1">renamed_from:</span> <span class="pl-s1"><span class="pl-pds">"</span>comments<span class="pl-pds">"</span></span> <span class="pl-k">do </span>|<span class="pl-vo">t</span>|
+  t.string   <span class="pl-s1"><span class="pl-pds">"</span>commenter<span class="pl-pds">"</span></span>
+  t.text     <span class="pl-s1"><span class="pl-pds">"</span>body<span class="pl-pds">"</span></span>
+  t.integer  <span class="pl-s1"><span class="pl-pds">"</span>article_id<span class="pl-pds">"</span></span>
+  t.datetime <span class="pl-s1"><span class="pl-pds">"</span>created_at<span class="pl-pds">"</span></span>
+  t.datetime <span class="pl-s1"><span class="pl-pds">"</span>updated_at<span class="pl-pds">"</span></span>
+<span class="pl-k">end</span></pre></div>
+
+<h2>
+<a id="foreign-key" class="anchor" href="#foreign-key" aria-hidden="true"><span class="octicon octicon-link"></span></a>Foreign Key</h2>
+
+<p>You can use the foreign key by passing <code>--enable-foreigner</code> (<a href="https://github.com/matthuhiggins/foreigner">foreigner</a> is required)</p>
+
+<div class="highlight highlight-ruby"><pre>create_table <span class="pl-s1"><span class="pl-pds">"</span>parent<span class="pl-pds">"</span></span>, <span class="pl-c1">force:</span> <span class="pl-c1">true</span> <span class="pl-k">do </span>|<span class="pl-vo">t</span>|
+<span class="pl-k">end</span>
+
+create_table <span class="pl-s1"><span class="pl-pds">"</span>child<span class="pl-pds">"</span></span>, <span class="pl-c1">id:</span> <span class="pl-c1">false</span>, <span class="pl-c1">force:</span> <span class="pl-c1">true</span> <span class="pl-k">do </span>|<span class="pl-vo">t</span>|
+  t.integer <span class="pl-s1"><span class="pl-pds">"</span>id<span class="pl-pds">"</span></span>
+  t.integer <span class="pl-s1"><span class="pl-pds">"</span>parent_id<span class="pl-pds">"</span></span>
+<span class="pl-k">end</span>
+
+add_index <span class="pl-s1"><span class="pl-pds">"</span>child<span class="pl-pds">"</span></span>, [<span class="pl-s1"><span class="pl-pds">"</span>parent_id<span class="pl-pds">"</span></span>], <span class="pl-c1">name:</span> <span class="pl-s1"><span class="pl-pds">"</span>par_ind<span class="pl-pds">"</span></span>, <span class="pl-c1">using:</span> <span class="pl-c1">:btree</span>
+
+add_foreign_key <span class="pl-s1"><span class="pl-pds">"</span>child<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>parent<span class="pl-pds">"</span></span>, <span class="pl-c1">name:</span> <span class="pl-s1"><span class="pl-pds">"</span>child_ibfk_1<span class="pl-pds">"</span></span>, <span class="pl-c1">dependent:</span> <span class="pl-c1">:delete</span></pre></div>
+
+<h2>
+<a id="bigint-support" class="anchor" href="#bigint-support" aria-hidden="true"><span class="octicon octicon-link"></span></a>bigint support</h2>
+
+<p>Export of <code>bigint</code> PK is enabled by passing <code>--enable-mysql-pkdump</code> (<a href="https://github.com/winebarrel/activerecord-mysql-pkdump">activerecord-mysql-pkdump</a> is required)</p>
+
+<div class="highlight highlight-ruby"><pre>create_table <span class="pl-s1"><span class="pl-pds">"</span>books<span class="pl-pds">"</span></span>, <span class="pl-c1">id:</span> <span class="pl-s1"><span class="pl-pds">"</span>bigint(20) PRIMARY KEY auto_increment<span class="pl-pds">"</span></span>, <span class="pl-c1">force:</span> <span class="pl-c1">true</span> <span class="pl-k">do </span>|<span class="pl-vo">t</span>|
+  t.string   <span class="pl-s1"><span class="pl-pds">"</span>title<span class="pl-pds">"</span></span>,      <span class="pl-c1">null:</span> <span class="pl-c1">false</span>
+  t.integer  <span class="pl-s1"><span class="pl-pds">"</span>author_id<span class="pl-pds">"</span></span>,  <span class="pl-c1">null:</span> <span class="pl-c1">false</span>
+  t.datetime <span class="pl-s1"><span class="pl-pds">"</span>created_at<span class="pl-pds">"</span></span>
+  t.datetime <span class="pl-s1"><span class="pl-pds">"</span>updated_at<span class="pl-pds">"</span></span>
+<span class="pl-k">end</span></pre></div>
+
+<h2>
+<a id="execute" class="anchor" href="#execute" aria-hidden="true"><span class="octicon octicon-link"></span></a>Execute</h2>
+
+<div class="highlight highlight-ruby"><pre>create_table <span class="pl-s1"><span class="pl-pds">"</span>authors<span class="pl-pds">"</span></span>, <span class="pl-c1">force:</span> <span class="pl-c1">true</span> <span class="pl-k">do </span>|<span class="pl-vo">t</span>|
+  t.string <span class="pl-s1"><span class="pl-pds">"</span>name<span class="pl-pds">"</span></span>, <span class="pl-c1">null:</span> <span class="pl-c1">false</span>
+<span class="pl-k">end</span>
+
+create_table <span class="pl-s1"><span class="pl-pds">"</span>books<span class="pl-pds">"</span></span>, <span class="pl-c1">force:</span> <span class="pl-c1">true</span> <span class="pl-k">do </span>|<span class="pl-vo">t</span>|
+  t.string  <span class="pl-s1"><span class="pl-pds">"</span>title<span class="pl-pds">"</span></span>,                     <span class="pl-c1">null:</span> <span class="pl-c1">false</span>
+  t.integer <span class="pl-s1"><span class="pl-pds">"</span>author_id<span class="pl-pds">"</span></span>, <span class="pl-c1">unsigned:</span> <span class="pl-c1">true</span>, <span class="pl-c1">null:</span> <span class="pl-c1">false</span>
+<span class="pl-k">end</span>
+
+add_index <span class="pl-s1"><span class="pl-pds">"</span>books<span class="pl-pds">"</span></span>, [<span class="pl-s1"><span class="pl-pds">"</span>author_id<span class="pl-pds">"</span></span>], <span class="pl-c1">name:</span> <span class="pl-s1"><span class="pl-pds">"</span>idx_author_id<span class="pl-pds">"</span></span>, <span class="pl-c1">using:</span> <span class="pl-c1">:btree</span>
+
+execute(<span class="pl-s1"><span class="pl-pds">"</span>ALTER TABLE books ADD CONSTRAINT fk_author FOREIGN KEY (author_id) REFERENCES authors (id)<span class="pl-pds">"</span></span>) <span class="pl-k">do </span>|<span class="pl-vo">c</span>|
+  <span class="pl-c"># Execute SQL only if there is no foreign key</span>
+  c.raw_connection.query(<span class="pl-s1"><span class="pl-pds">"</span>SELECT 1 FROM information_schema.key_column_usage WHERE TABLE_SCHEMA = 'bookshelf' AND CONSTRAINT_NAME = 'fk_author' LIMIT 1<span class="pl-pds">"</span></span>).each.length.zero?
+<span class="pl-k">end</span></pre></div>
+
+<h2>
+<a id="diff" class="anchor" href="#diff" aria-hidden="true"><span class="octicon octicon-link"></span></a>Diff</h2>
+
+<div class="highlight highlight-sh"><pre>$ ridgepole --diff file1.schema file2.schema
+add_column(<span class="pl-s1"><span class="pl-pds">"</span>articles<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>author<span class="pl-pds">"</span></span>, :text, {:after=<span class="pl-k">&gt;</span><span class="pl-s1"><span class="pl-pds">"</span>title<span class="pl-pds">"</span></span>})
+rename_column(<span class="pl-s1"><span class="pl-pds">"</span>articles<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>text<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>desc<span class="pl-pds">"</span></span>)
+
+<span class="pl-c"># You can apply to the database the difference:</span>
+<span class="pl-c"># $ ridgepole -c config.yml --diff file1.schema file2.schema --with-apply</span></pre></div>
+
+<p>You can also compare databases and files.</p>
+
+<div class="highlight highlight-sh"><pre>$ ridgepole --diff config.yml file1.schema
+remove_column(<span class="pl-s1"><span class="pl-pds">"</span>articles<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>author<span class="pl-pds">"</span></span>)</pre></div>
+
+<h3>
+<a id="reverse-diff" class="anchor" href="#reverse-diff" aria-hidden="true"><span class="octicon octicon-link"></span></a>Reverse diff</h3>
+
+<div class="highlight highlight-sh"><pre>$ cat file1.schema
+create_table <span class="pl-s1"><span class="pl-pds">"</span>articles<span class="pl-pds">"</span></span>, force: <span class="pl-s3">true</span> <span class="pl-k">do</span> <span class="pl-k">|</span>t<span class="pl-k">|</span>
+  t.string   <span class="pl-s1"><span class="pl-pds">"</span>title<span class="pl-pds">"</span></span>
+  t.text     <span class="pl-s1"><span class="pl-pds">"</span>text<span class="pl-pds">"</span></span>
+  t.datetime <span class="pl-s1"><span class="pl-pds">"</span>created_at<span class="pl-pds">"</span></span>
+  t.datetime <span class="pl-s1"><span class="pl-pds">"</span>updated_at<span class="pl-pds">"</span></span>
+end
+
+$ cat file2.schema
+create_table <span class="pl-s1"><span class="pl-pds">"</span>articles<span class="pl-pds">"</span></span>, force: <span class="pl-s3">true</span> <span class="pl-k">do</span> <span class="pl-k">|</span>t<span class="pl-k">|</span>
+  t.string   <span class="pl-s1"><span class="pl-pds">"</span>title<span class="pl-pds">"</span></span>
+  t.text     <span class="pl-s1"><span class="pl-pds">"</span>desc<span class="pl-pds">"</span></span>, renamed_from: <span class="pl-s1"><span class="pl-pds">"</span>text<span class="pl-pds">"</span></span>
+  t.text     <span class="pl-s1"><span class="pl-pds">"</span>author<span class="pl-pds">"</span></span>
+  t.datetime <span class="pl-s1"><span class="pl-pds">"</span>created_at<span class="pl-pds">"</span></span>
+  t.datetime <span class="pl-s1"><span class="pl-pds">"</span>updated_at<span class="pl-pds">"</span></span>
+end
+
+$ ridgepole --diff file1.schema file2.schema
+add_column(<span class="pl-s1"><span class="pl-pds">"</span>articles<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>author<span class="pl-pds">"</span></span>, :text, {:after=<span class="pl-k">&gt;</span><span class="pl-s1"><span class="pl-pds">"</span>title<span class="pl-pds">"</span></span>})
+rename_column(<span class="pl-s1"><span class="pl-pds">"</span>articles<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>text<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>desc<span class="pl-pds">"</span></span>)
+
+$ ridgepole --diff file1.schema file2.schema --reverse
+rename_column(<span class="pl-s1"><span class="pl-pds">"</span>articles<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>desc<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>text<span class="pl-pds">"</span></span>)
+remove_column(<span class="pl-s1"><span class="pl-pds">"</span>articles<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>author<span class="pl-pds">"</span></span>)</pre></div>
+
+<h2>
+<a id="demo" class="anchor" href="#demo" aria-hidden="true"><span class="octicon octicon-link"></span></a>Demo</h2>
+
+<ul>
+<li><a href="https://asciinema.org/a/9349">asciinema.org/a/9349</a></li>
+<li><a href="https://asciinema.org/a/11788">asciinema.org/a/11788</a></li>
+</ul>
+
+<h2>
+<a id="example-project" class="anchor" href="#example-project" aria-hidden="true"><span class="octicon octicon-link"></span></a>Example project</h2>
+
+<ul>
+<li>
+<a href="https://github.com/winebarrel/ridgepole-example">https://github.com/winebarrel/ridgepole-example</a>
+
+<ul>
+<li><a href="https://github.com/winebarrel/ridgepole-example/pull/1">https://github.com/winebarrel/ridgepole-example/pull/1</a></li>
+<li><a href="https://github.com/winebarrel/ridgepole-example/pull/2">https://github.com/winebarrel/ridgepole-example/pull/2</a></li>
+</ul>
+</li>
+</ul>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Ridgepole maintained by <a href="https://github.com/winebarrel">winebarrel</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
