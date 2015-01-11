@@ -1,0 +1,12 @@
+# Site settings
+title: Ridgepole
+email: sgwr_dts@yahoo.co.jp
+description: "Ridgepole is a tool to manage DB schema. It defines DB schema using Rails DSL, and updates DB schema according to DSL. (like Chef/Puppet)"
+baseurl: "" # the subpath of your site, e.g. /blog/
+url: "http://ridgepole.codenize.tools/"
+github_url: "https://github.com/winebarrel/ridgepole"
+twitter_username: sgwr_dts
+github_username:  winebarrel
+
+# Build settings
+markdown: kramdown
