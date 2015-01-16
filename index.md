@@ -20,6 +20,10 @@ layout: default
 * `>= 0.5.1`
   * Add `--enable-migration-comments` option ([migration_comments](https://github.com/pinnymz/migration_comments) is required)
   * Fix rails version `< 4.2.0`
+* `>= 0.5.2`
+  * Add `--enable-mysql-awesome` option ([activerecord-mysql-awesome](https://github.com/kamipo/activerecord-mysql-awesome) is required `>= 0.0.3`)
+  * It is not possible to enable both `--enable-mysql-awesome` and --enable-migration-comments`, `--enable-mysql-awesome` and --enable-mysql-unsigned`, `--enable-mysql-awesome` and --enable-mysql-pkdump`
+  * Fix foreigner version `<= 1.7.1`
 
 ## Installation
 
@@ -62,7 +66,11 @@ Usage: ridgepole [options]
         --enable-mysql-pkdump
         --enable-foreigner
         --enable-migration-comments
+        --enable-mysql-awesome
+        --mysql-awesome-unsigned-pk
         --normalize-mysql-float
+        --dump-without-table-options
+    -r, --require LIBS
         --log-file LOG_FILE
         --verbose
         --debug
@@ -174,6 +182,18 @@ create_table "articles", force: true, comment: "table comment" do |t|
 end
 {% endhighlight %}
 
+## Collation
+You can use the column collation by passing `--enable-mysql-awesome` ([activerecord-mysql-awesome](https://github.com/kamipo/activerecord-mysql-awesome) is required)
+
+{% highlight ruby %}
+create_table "articles", force: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  t.string   "title",                    collation: "ascii_bin"
+  t.text     "text",       null: false,  collation: "utf8mb4_bin"
+  t.datetime "created_at"
+  t.datetime "updated_at"
+end
+{% endhighlight %}
+
 ## bigint support
 Export of `bigint` PK is enabled by passing `--enable-mysql-pkdump` ([activerecord-mysql-pkdump](https://github.com/winebarrel/activerecord-mysql-pkdump) is required)
 
@@ -183,6 +203,14 @@ create_table "books", id: "bigint(20) PRIMARY KEY auto_increment", force: true d
   t.integer  "author_id",  null: false
   t.datetime "created_at"
   t.datetime "updated_at"
+end
+{% endhighlight %}
+
+If you use `--enable-mysql-awesome`:
+
+{% highlight ruby %}
+create_table "books", id: :bigint, force: true do |t|
+  ...
 end
 {% endhighlight %}
 
