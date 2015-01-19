@@ -22,7 +22,7 @@ layout: default
   * Fix rails version `< 4.2.0`
 * `>= 0.5.2`
   * Add `--enable-mysql-awesome` option ([activerecord-mysql-awesome](https://github.com/kamipo/activerecord-mysql-awesome) is required `>= 0.0.3`)
-  * It is not possible to enable both `--enable-mysql-awesome` and --enable-migration-comments`, `--enable-mysql-awesome` and --enable-mysql-unsigned`, `--enable-mysql-awesome` and --enable-mysql-pkdump`
+  * It is not possible to enable both `--enable-mysql-awesome` and `--enable-migration-comments`, `--enable-mysql-awesome` and `--enable-mysql-unsigned`, `--enable-mysql-awesome` and `--enable-mysql-pkdump`
   * Fix foreigner version `<= 1.7.1`
 
 ## Installation
