@@ -260,9 +260,9 @@ remove_column("articles", "author")
 
 ## Example project
 
-* https://github.com/winebarrel/ridgepole-example
-  * https://github.com/winebarrel/ridgepole-example/pull/1
-  * https://github.com/winebarrel/ridgepole-example/pull/2
+* [github.com/winebarrel/ridgepole-example](https://github.com/winebarrel/ridgepole-example)
+  * [github.com/winebarrel/ridgepole-example/pull/1](https://github.com/winebarrel/ridgepole-example/pull/1)
+  * [github.com/winebarrel/ridgepole-example/pull/2](https://github.com/winebarrel/ridgepole-example/pull/2)
 
 ## Similar tools
 * [Codenize.tools](http://codenize.tools/)
