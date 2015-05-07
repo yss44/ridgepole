@@ -36,6 +36,7 @@ class Ridgepole::DSLParser
         :date,
         :binary,
         :boolean,
+        :uuid
       ]
 
       TYPES.each do |column_type|
